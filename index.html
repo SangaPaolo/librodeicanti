@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="it">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Libro dei Canti – Lista condivisa</title>
+	<meta name="robots" content="noindex" />
+	<style>
+		:root { --bg: #00708b; --card: #ffffff; --text: #1c0f13; --muted: #5d6f75; --accent: #00708b; }
+		@media (prefers-color-scheme: dark) {
+			:root { --bg: #0c1a1f; --card: #15272e; --text: #eaf2f5; --muted: #8a9da4; --accent: #4fb3cc; }
+		}
+		* { box-sizing: border-box; }
+		body {
+			margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+			padding: 24px 16px; background: var(--bg); color: var(--text);
+			font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		}
+		main { width: 100%; max-width: 420px; background: var(--card); border-radius: 24px; padding: 28px 24px; text-align: center; }
+		h1 { font-size: 28px; font-weight: 900; margin: 0 0 4px; }
+		.list { font-size: 20px; font-weight: 800; margin: 16px 0 4px; word-break: break-word; }
+		p { color: var(--muted); margin: 8px 0; line-height: 1.45; }
+		a.button {
+			display: block; margin-top: 20px; padding: 14px; border-radius: 999px; background: var(--accent);
+			color: #fff; font-weight: 800; font-size: 17px; text-decoration: none;
+		}
+		.hidden { display: none; }
+	</style>
+</head>
+<body>
+	<main>
+		<h1>Libro dei Canti</h1>
+		<div id="list" class="list"></div>
+		<p id="info">Ti hanno condiviso una lista di canti.</p>
+		<a id="open" class="button" href="#">Apri nell'app</a>
+		<p id="noapp">Non hai ancora l'app? Installala dall'App Store o da Google Play, poi torna su questo link.</p>
+		<p id="invalid" class="hidden">Questo link non contiene una lista valida.</p>
+	</main>
+	<script>
+		// The whole list travels in the link (?t=title&s=12.5.33): this page only
+		// hands it to the app. Nothing is sent anywhere.
+		(function () {
+			var params = new URLSearchParams(location.search);
+			var title = params.get("t");
+			var songs = params.get("s");
+			if (!title || !songs || !/^[0-9.]+$/.test(songs)) {
+				document.getElementById("open").classList.add("hidden");
+				document.getElementById("info").classList.add("hidden");
+				document.getElementById("noapp").classList.add("hidden");
+				document.getElementById("invalid").classList.remove("hidden");
+				return;
+			}
+			document.getElementById("list").textContent = title;
+			var appLink = "librodeicanti://lista/importa?" + new URLSearchParams({ t: title, s: songs }).toString();
+			document.getElementById("open").href = appLink;
+			// Try to open the app straight away; the button stays for browsers that block it.
+			location.href = appLink;
+		})();
+	</script>
+</body>
+</html>
